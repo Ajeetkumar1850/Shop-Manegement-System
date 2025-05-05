@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Workers{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-person-badge"></i> Workers</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addWorkerModal">
+            <i class="bi bi-plus-circle"></i> Add Worker
+        </button>
+    </div>
+</div>
+
+<!-- Add Worker Modal -->
+<div class="modal fade" id="addWorkerModal" tabindex="-1" aria-labelledby="addWorkerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addWorkerModalLabel">Add New Worker</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="workerForm">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control", placeholder="Enter full name") }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.job.label(class="form-label") }}
+                        {{ form.job(class="form-control", placeholder="Enter job position") }}
+                        {% if form.job.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.job.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.age.label(class="form-label") }}
+                            {{ form.age(class="form-control", placeholder="Age") }}
+                            {% if form.age.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.age.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.salary.label(class="form-label") }}
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                {{ form.salary(class="form-control", placeholder="Salary") }}
+                            </div>
+                            {% if form.salary.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.salary.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.phone_number.label(class="form-label") }}
+                        {{ form.phone_number(class="form-control", placeholder="Phone number") }}
+                        {% if form.phone_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.phone_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Worker
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Worker List</h4>
+        <div class="d-flex">
+            <input type="text" class="form-control me-2" id="searchInput" placeholder="Search workers...">
+            <button class="btn btn-outline-secondary" id="refreshBtn">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle" id="workersTable">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Age</th>
+                    <th>Salary</th>
+                    <th>Contact</th>
+                    <th>Added On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for worker in workers %}
+                <tr>
+                    <td>{{ worker.worker_id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar me-2">
+                                <span class="bg-primary text-white rounded-circle p-2">
+                                    {{ worker.name[0]|upper }}
+                                </span>
+                            </div>
+                            <div>
+                                <strong>{{ worker.name }}</strong>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge bg-info text-dark">{{ worker.job }}</span>
+                    </td>
+                    <td>{{ worker.age }}</td>
+                    <td>₹{{ "{:,.2f}".format(worker.salary) }}</td>
+                    <td>
+                        <a href="tel:{{ worker.phone_number }}" class="text-decoration-none">
+                            <i class="bi bi-telephone"></i> {{ worker.phone_number }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if worker.date_added %}
+                            {{ worker.date_added.strftime('%d %b %Y') }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="{{ url_for('view_worker', worker_id=worker.worker_id) }}" 
+                               class="btn btn-sm btn-outline-primary" title="View">
+                                <i class="bi bi-eye">View</i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center py-4">
+                        <div class="text-muted">
+                            <i class="bi bi-people" style="font-size: 2rem;"></i>
+                            <h5 class="mt-2">No workers found</h5>
+                            <p>Add your first worker using the button above</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Simple search functionality
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#workersTable tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? '' : 'none';
+        });
+    });
+    
+    // Refresh button
+    document.getElementById('refreshBtn').addEventListener('click', function() {
+        window.location.reload();
+    });
+    
+    // Show modal if form has errors
+    
+</script>
+{% endblock %}
+
+<style>
+    .avatar {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .table th {
+        white-space: nowrap;
+    }
+    
+    .table td {
+        vertical-align: middle;
+    }
+</style>
+{% endblock %}

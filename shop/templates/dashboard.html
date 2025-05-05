@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Total Customers</h5>
+                <h2 class="card-text">{{ customer_count }}</h2>
+                <a href="{{ url_for('manage_customers') }}" class="btn btn-outline-primary btn-sm">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <i class="fas fa-shopping-basket fa-3x mb-3 text-success"></i>
+                <h5 class="card-title">Total Products</h5>
+                <h2 class="card-text">{{ product_count }}</h2>
+                <a href="{{ url_for('manage_products') }}" class="btn btn-outline-success btn-sm">View All</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="card-body">
+                <i class="fas fa-user-tie fa-3x mb-3 text-info"></i>
+                <h5 class="card-title">Total Workers</h5>
+                <h2 class="card-text">{{ worker_count }}</h2>
+                <a href="{{ url_for('manage_workers') }}" class="btn btn-outline-info btn-sm">View All</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Transactions</h5>
+                <a href="{{ url_for('manage_customers') }}" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Customer</th>
+                                <th>Phone</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for customer in recent_customers %}
+                            <tr>
+                                <td>{{ customer.name }}</td>
+                                <td>{{ customer.phone }}</td>
+                                <td>₹{{ customer.cost }}</td>
+                                <td>{{ customer.date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    <a href="{{ url_for('view_customer', phone=customer.phone) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                       <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

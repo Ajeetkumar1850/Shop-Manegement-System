@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #2ecc71;
+        --primary-dark: #27ae60;
+        --secondary: #3498db;
+        --dark: #2c3e50;
+        --light: #ecf0f1;
+        --shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                    url("{{ url_for('static', filename='images/grocery_home.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        min-height: 600px;
+        display: flex;
+        align-items: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-content {
+        max-width: 800px;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 1s ease;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+    
+    .btn-hero {
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s;
+        border: none;
+    }
+    
+    .btn-primary {
+        background: var(--primary);
+    }
+    
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+    }
+    
+    .btn-outline-light {
+        border: 2px solid white;
+    }
+    
+    .btn-outline-light:hover {
+        background: white;
+        color: var(--dark);
+        transform: translateY(-3px);
+    }
+    
+    .features-section {
+        padding: 6rem 0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+    
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 3rem;
+        position: relative;
+        display: inline-block;
+        color: var(--dark);
+    }
+    
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
+    
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2.5rem 2rem;
+        box-shadow: var(--shadow);
+        transition: all 0.4s ease;
+        height: 100%;
+        text-align: center;
+        border-bottom: 4px solid transparent;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        border-bottom-color: var(--primary);
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+        background: rgba(46, 204, 113, 0.1);
+        width: 80px;
+        height: 80px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+    
+    .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+    
+    .feature-card p {
+        color: #7f8c8d;
+        line-height: 1.6;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+        }
+        
+        .hero-content {
+            padding: 2rem;
+        }
+    }
+</style>
+
+<!-- Hero Section with Parallax Effect -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to  Grocery Shop</h1>
+            <p class="hero-subtitle">Your one-stop destination for fresh groceries, household essentials, and quality products at affordable prices.</p>
+            {% if not current_user.is_authenticated %}
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="{{ url_for('login') }}" class="btn btn-hero btn-primary">Login</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-hero btn-outline-light">Sign UP</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title text-center">Why Choose Our Grocery Shop?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Fresh Products</h3>
+                    <p>We source only the freshest fruits, vegetables, and groceries daily to ensure quality for our customers.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <h3>Affordable Prices</h3>
+                    <p>Competitive pricing without compromising on quality. We believe in value for money.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Convenient Hours</h3>
+                    <p>Open 7 days a week with extended hours to serve you when you need us most.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

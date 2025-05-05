@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Details{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h2><i class="bi bi-person"></i> Customer Details</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>{{ customer.name }}'s Profile</h5>
+                <div class="btn-group">
+                    <a href="{{ url_for('manage_customers') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteCustomerModal">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-4">
+                        <div class="avatar-lg bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                            {{ customer.name[0]|upper }}
+                        </div>
+                        <h5>{{ customer.name }}</h5>
+                        <span class="badge bg-info text-dark">Customer</span>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th width="30%">Phone:</th>
+                                <td>
+                                    <a href="tel:{{ customer.phone }}" class="text-decoration-none">
+                                        <i class="bi bi-telephone"></i> {{ customer.phone }}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Total Purchases:</th>
+                                <td>₹{{ "{:,.2f}".format(total_debt or 0) }}</td>
+                            </tr>
+                            <tr>
+                                <th>Last Purchase:</th>
+                                <td>
+                                    {% if customer.date %}
+                                        {{ customer.date.strftime('%d %b %Y') }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="deleteCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteCustomerModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ customer.name }}</strong>?</p>
+                <p class="text-danger"><i class="bi bi-exclamation-triangle"></i> All purchase history for this customer will be permanently removed.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('delete_customer', phone=customer.phone) }}" method="POST">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirm Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

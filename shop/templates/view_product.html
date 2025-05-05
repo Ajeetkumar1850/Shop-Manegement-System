@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Product Details{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <h2><i class="bi bi-box-seam"></i> Product Details</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>{{ product.product_name }}</h5>
+                <div class="btn-group">
+                    <a href="{{ url_for('manage_products') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteProductModal">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="30%">Product ID:</th>
+                        <td>{{ product.product_id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Name:</th>
+                        <td>{{ product.product_name }}</td>
+                    </tr>
+                    <tr>
+                        <th>Price:</th>
+                        <td>₹{{ "{:,.2f}".format(product.product_cost) }}</td>
+                    </tr>
+                    <tr>
+                        <th>In Stock:</th>
+                        <td>
+                            {% if product.quantity %}
+                                <span class="badge bg-success">{{ product.quantity }} units</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Out of stock</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteProductModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ product.product_name }}</strong>?</p>
+                <p class="text-danger"><i class="bi bi-exclamation-triangle"></i> This product will be removed from all records.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('delete_product', product_id=product.product_id) }}" method="POST">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirm Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

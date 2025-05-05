@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Chart{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-pie-chart"></i> Stock Levels</h2>
+    <a href="{{ url_for('manage_stocks') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Stock
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body text-center">
+        <img src="data:image/png;base64,{{ plot_url }}" class="img-fluid" alt="Stock Levels Chart">
+    </div>
+</div>
+{% endblock %}

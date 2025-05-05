@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Stock{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-box-seam"></i> Stock Management</h2>
+    <div>
+        <a href="{{ url_for('stock_chart') }}" class="btn btn-info me-2">
+            <i class="bi bi-pie-chart"></i> View Chart
+        </a>
+        <a href="{{ url_for('manage_stocks') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Stock
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="stockTable">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stock in stocks %}
+                    <tr>
+                        <td>{{ stock.product_name }}</td>
+                        <td>{{ stock.quantity }}</td>
+                        <td>
+                            {% if stock.quantity > 10 %}
+                                <span class="badge bg-success">In Stock</span>
+                            {% elif stock.quantity > 0 %}
+                                <span class="badge bg-warning">Low Stock</span>
+                            {% else %}
+                                <span class="badge bg-danger">Out of Stock</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

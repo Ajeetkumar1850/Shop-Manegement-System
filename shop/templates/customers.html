@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Customers{% endblock %}
+
+{% block content %}
+<div class="content-header">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-people"></i> Customers</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+            <i class="bi bi-plus-circle"></i> Add Customer
+        </button>
+    </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerModalLabel">Add New Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="customerForm">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control", placeholder="Enter full name") }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.phone.label(class="form-label") }}
+                        {{ form.phone(class="form-control", placeholder="Phone number") }}
+                        {% if form.phone.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.phone.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.cost.label(class="form-label") }}
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            {{ form.cost(class="form-control", placeholder="Amount") }}
+                        </div>
+                        {% if form.cost.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.cost.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Customer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="table-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Customer List</h4>
+        <div class="d-flex">
+            <input type="text" class="form-control me-2" id="searchCustomerInput" placeholder="Search customers...">
+            <button class="btn btn-outline-secondary" id="refreshCustomerBtn">
+                <i class="bi bi-arrow-clockwise"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover align-middle" id="customersTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Total Spent</th>
+                    <th>Last Purchase</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar me-2">
+                                <span class="bg-primary text-white rounded-circle p-2">
+                                    {{ customer.name[0]|upper }}
+                                </span>
+                            </div>
+                            <div>
+                                <strong>{{ customer.name }}</strong>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="tel:{{ customer.phone }}" class="text-decoration-none">
+                            <i class="bi bi-telephone"></i> {{ customer.phone }}
+                        </a>
+                    </td>
+                    <td>₹{{ "{:,.2f}".format(customer.cost) }}</td>
+                    <td>
+                        {% if customer.date %}
+                            {{ customer.date.strftime('%d %b %Y') }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="{{ url_for('view_customer', phone=customer.phone) }}" 
+                               class="btn btn-sm btn-outline-primary" title="View">
+                                <i class="bi bi-eye">View</i>
+                            </a>
+                         
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-4">
+                        <div class="text-muted">
+                            <i class="bi bi-people" style="font-size: 2rem;"></i>
+                            <h5 class="mt-2">No customers found</h5>
+                            <p>Add your first customer using the button above</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Customer search functionality
+    document.getElementById('searchCustomerInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#customersTable tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? '' : 'none';
+        });
+    });
+    
+    // Refresh button
+    document.getElementById('refreshCustomerBtn').addEventListener('click', function() {
+        window.location.reload();
+    });
+    
+    
+</script>
+{% endblock %}
+{% endblock %}
